@@ -16,19 +16,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
+public class LogInActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button buttonRegister;
-    private EditText editTextConfirmPassword;
+    private Button buttonSignIn;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private TextView textViewSignin;
+    private TextView textViewCreateAccount;
+
     private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_log_in);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -36,24 +36,18 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             finish();
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }
-
-        buttonRegister = findViewById(R.id.buttonRegister);
-
-        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
+        buttonSignIn = findViewById(R.id.buttonSignIn);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
+        textViewCreateAccount = findViewById(R.id.textViewCreateAccount);
 
-        textViewSignin = findViewById(R.id.textViewSignin);
-
-        buttonRegister.setOnClickListener(this);
-        textViewSignin.setOnClickListener(this);
+        buttonSignIn.setOnClickListener(this);
+        textViewCreateAccount.setOnClickListener(this);
     }
 
-    private void registerUser() {
+    private void userLogin(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-
 
         if(TextUtils.isEmpty(email)) {
             //email is empty
@@ -63,37 +57,32 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             //password is empty
             Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
             return;
-        } else if(TextUtils.isEmpty(confirmPassword)) {
-            //confirm password is empty
-            Toast.makeText(this, "Please confirm your password", Toast.LENGTH_SHORT).show();
-            return;
-        } else if(!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
         }
 
-        //Register User
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
+                            //start profile activity
                             finish();
                             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                         } else {
-                            Toast.makeText(SignUpActivity.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LogInActivity.this, "Could not log in. Please try again.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
     @Override
     public void onClick(View view) {
-        if(view == buttonRegister) {
-            registerUser();
+        if(view == buttonSignIn) {
+            userLogin();
         }
 
-        if(view == textViewSignin) {
-            startActivity(new Intent(this, LogInActivity.class));
+        if(view == textViewCreateAccount){
+            finish();
+            startActivity(new Intent(this, SignUpActivity.class));
         }
     }
 }
