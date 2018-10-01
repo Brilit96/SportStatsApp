@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "732508535186",
-    "firebase_url": "https://testapp-d834a.firebaseio.com",
-    "project_id": "testapp-d834a",
-    "storage_bucket": "testapp-d834a.appspot.com"
+    "project_number": "413194897178",
+    "firebase_url": "https://sportstatsapp.firebaseio.com",
+    "project_id": "sportstatsapp",
+    "storage_bucket": "sportstatsapp.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:732508535186:android:45b8cd5e5d1a5019",
+        "mobilesdk_app_id": "1:413194897178:android:45b8cd5e5d1a5019",
         "android_client_info": {
           "package_name": "com.blittle.sportstatsapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "732508535186-92tqdhrncjmlvjkqgbtqupnj7fcsfs75.apps.googleusercontent.com",
+          "client_id": "413194897178-bbhli0njsktuvfnc3660qjhkbksteofm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB37OdBqIEeUjpD84Zg-FsIhVAV_owHJS8"
+          "current_key": "AIzaSyD4d9Cr8Iuh5MLm0DmcXCERTeWo7FvK3Kg"
         }
       ],
       "services": {

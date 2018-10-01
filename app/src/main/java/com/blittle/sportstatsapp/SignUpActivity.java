@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,7 @@ import org.w3c.dom.Text;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button buttonRegister;
+    private EditText editTextConfirmPassword;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private TextView textViewSignin;
@@ -35,6 +38,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         buttonRegister = findViewById(R.id.buttonRegister);
 
+        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
 
@@ -47,16 +51,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void registerUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)) {
             //email is empty
-            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter an email", Toast.LENGTH_SHORT).show();
             return;
-        }
-
-        if(TextUtils.isEmpty(password)) {
+        } else if(TextUtils.isEmpty(password)) {
             //password is empty
-            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(TextUtils.isEmpty(confirmPassword)) {
+            //confirm password is empty
+            Toast.makeText(this, "Please confirm your password", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -72,7 +82,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         }
                     }
                 });
-        //TODO: Add success/failure feedback
     }
     @Override
     public void onClick(View view) {

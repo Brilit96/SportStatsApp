@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SportStatsApp</string>
+    <string name="enterEmail">Enter Email</string>
+    <string name="enterPassword">Create Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="register">Register</string>
+    <string name="alreadyRegistered">Already Registered? Sign in here</string>
 </resources>
