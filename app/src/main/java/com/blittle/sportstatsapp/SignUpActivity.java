@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -24,7 +25,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextConfirmPassword;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private TextView textViewSignin;
+    private TextView textViewSignIn;
+
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -45,10 +47,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
 
-        textViewSignin = findViewById(R.id.textViewSignin);
+        textViewSignIn = findViewById(R.id.textViewSignIn);
 
         buttonRegister.setOnClickListener(this);
-        textViewSignin.setOnClickListener(this);
+        textViewSignIn.setOnClickListener(this);
     }
 
     private void registerUser() {
@@ -99,7 +101,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                         }
                                     });
                         } else {
-                            Toast.makeText(SignUpActivity.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(SignUpActivity.this, "Email already registered", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
@@ -107,12 +113,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        if(view == buttonRegister) {
-            registerUser();
-        }
+        switch (view.getId()) {
+            case R.id.buttonRegister:
+                registerUser();
+                break;
 
-        if(view == textViewSignin) {
-            startActivity(new Intent(this, LogInActivity.class));
+            case R.id.textViewSignIn:
+                startActivity(new Intent(this, LogInActivity.class));
+                break;
         }
     }
 }

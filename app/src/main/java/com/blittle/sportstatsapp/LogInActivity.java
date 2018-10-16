@@ -23,16 +23,16 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     private EditText editTextPassword;
     private TextView textViewCreateAccount;
 
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() != null) {
+        if(mAuth.getCurrentUser() != null) {
             finish();
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }
@@ -59,7 +59,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -68,7 +68,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                             finish();
                             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                         } else {
-                            Toast.makeText(LogInActivity.this, "Could not log in. Please try again.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
