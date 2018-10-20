@@ -51,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         textViewViablePassword = findViewById(R.id.textViewViablePassword);
+        textViewSignIn = findViewById(R.id.textViewSignIn);
 
         editTextPassword.addTextChangedListener(new TextWatcher() {
             @Override
@@ -60,25 +61,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String password = editTextPassword.getText().toString().trim();
-                String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-                textViewViablePassword.setText("");
-
-                if(!password.equals(confirmPassword)) {
-                    textViewViablePassword.setText("Passwords MUST match\n");
-                    return;
-                }
-                if(!password.matches("(.*)[0-9](.*)")) {
-                    textViewViablePassword.append("Password MUST contain a number\n");
-                }
-                if(!password.matches("(.*)[A-Z](.*)")) {
-                    textViewViablePassword.append("Password MUST contain an uppercase character\n");
-                }
-                if(password.length() < 7) {
-                    textViewViablePassword.append("Password MUST be at least 8 characters\n");
-                }
-
-                if(checkPasswordStrength()) {
+                if (checkPasswordStrength(textViewViablePassword)) {
                     textViewViablePassword.setText("Password is strong enough");
                 }
             }
@@ -97,25 +80,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String password = editTextPassword.getText().toString().trim();
-                String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-                textViewViablePassword.setText("");
-
-                if(!password.equals(confirmPassword)) {
-                    textViewViablePassword.setText("Passwords MUST match\n");
-                    return;
-                }
-                if(!password.matches("(.*)[0-9](.*)")) {
-                    textViewViablePassword.append("Password MUST contain a number\n");
-                }
-                if(!password.matches("(.*)[A-Z](.*)")) {
-                    textViewViablePassword.append("Password MUST contain an uppercase character\n");
-                }
-                if(password.length() < 7) {
-                    textViewViablePassword.append("Password MUST be at least 8 characters\n");
-                }
-
-                if(checkPasswordStrength()) {
+                if (checkPasswordStrength(textViewViablePassword)) {
                     textViewViablePassword.setText("Password is strong enough");
                 }
             }
@@ -125,8 +90,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        textViewSignIn = findViewById(R.id.textViewSignIn);
-
+        
         buttonRegister.setOnClickListener(this);
         textViewSignIn.setOnClickListener(this);
     }
@@ -198,19 +162,48 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 });
     }
 
+    //Returns a boolean of whether or not the password is strong enough and writes feedback in the given TextView
+    private boolean checkPasswordStrength(TextView textViewPasswordFeedback) {
+        String password = editTextPassword.getText().toString().trim();
+        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+        int passwordStrength = 0;
+
+        //Check if passwords are the same, contains a number, uppercase character, and is longer than 8 characters.
+        textViewPasswordFeedback.setText("");
+
+        if(!password.equals(confirmPassword)) {
+            textViewPasswordFeedback.setText("Passwords MUST match\n");
+            return false;
+        }
+        if(!password.matches("(.*)[0-9](.*)")) {
+            textViewPasswordFeedback.append("Password MUST contain a number\n");
+        } else {
+            passwordStrength++;
+        }
+        if(!password.matches("(.*)[A-Z](.*)")) {
+            textViewPasswordFeedback.append("Password MUST contain an uppercase character\n");
+        } else {
+            passwordStrength++;
+        }
+        if(password.length() < 7) {
+            textViewPasswordFeedback.append("Password MUST be at least 8 characters\n");
+        } else {
+            passwordStrength++;
+        }
+
+        //Only return true if all requirements are met
+        return (passwordStrength >= 3);
+    }
+
+    //Returns a boolean of whether or not the password is strong enough
     private boolean checkPasswordStrength() {
         String password = editTextPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
-        //Check if passwords are the same, contains a number, uppercase character, and is longer than 8 characters.
-        if(password.equals(confirmPassword)) {
-            if(password.matches("(.*)[0-9](.*)") && password.matches("(.*)[A-Z](.*)") && password.length() > 7) {
-                return true;
-            }
-        }
-
-        //If it makes it here, the password was not strong enough.
-        return false;
+        return(password.equals(confirmPassword) &&
+                password.matches("(.*)[0-9](.*)") &&
+                password.matches("(.*)[A-Z](.*)") &&
+                password.length() < 7);
     }
 
     @Override
