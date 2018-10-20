@@ -35,6 +35,12 @@
             android:hint="@string/confirmPassword"
             android:inputType="textPassword" />
 
+        <TextView
+            android:id="@+id/textViewViablePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center" />
+
         <Button
             android:id="@+id/buttonRegister"
             android:layout_width="match_parent"
