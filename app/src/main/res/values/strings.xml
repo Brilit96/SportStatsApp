@@ -2,6 +2,7 @@
     <string name="app_name">SportStatsApp</string>
     <string name="enterEmail">Email</string>
     <string name="enterPassword">Password</string>
+    <string name="enterUsername">Desired Username</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="register">Register</string>
     <string name="alreadyRegistered">Already Registered? Sign in here</string>

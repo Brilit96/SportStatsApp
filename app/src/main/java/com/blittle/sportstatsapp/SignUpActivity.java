@@ -21,6 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,8 +34,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextConfirmPassword;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private EditText editTextUsername;
     private TextView textViewSignIn;
     private TextView textViewViablePassword;
+    private boolean usernameAvailable;
 
     private FirebaseAuth firebaseAuth;
 
@@ -38,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        usernameAvailable = false;
         firebaseAuth = FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser() != null) {
@@ -50,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
+        editTextUsername = findViewById(R.id.editTextUsername);
         textViewViablePassword = findViewById(R.id.textViewViablePassword);
         textViewSignIn = findViewById(R.id.textViewSignIn);
 
@@ -90,34 +100,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        
+
         buttonRegister.setOnClickListener(this);
         textViewSignIn.setOnClickListener(this);
     }
 
+    //Method to handle user registration, should be called in signUp() method
     private void registerUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-
-
-        if(TextUtils.isEmpty(email)) {
-            //email is empty
-            Toast.makeText(this, "Please enter an email", Toast.LENGTH_SHORT).show();
-            return;
-        } else if(TextUtils.isEmpty(password)) {
-            //password is empty
-            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
-            return;
-        } else if(TextUtils.isEmpty(confirmPassword)) {
-            //confirm password is empty
-            Toast.makeText(this, "Please confirm your password", Toast.LENGTH_SHORT).show();
-            return;
-        } else if(!checkPasswordStrength()) {
-            Toast.makeText(this, "Passwords do not match, or is not strong enough", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         //Register User
         firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -137,13 +129,20 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                             //Set Display Name for User
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName("Default").build();
+                                    .setDisplayName(editTextUsername.getText().toString().trim())
+                                    .build();
+
+                            //Input userInfo into Cloud Firestore database
+                            Map<String, Object> userInfo = new HashMap<>();
+                            userInfo.put("email", user.getEmail());
+                            userInfo.put("username", editTextUsername.getText().toString().trim());
+                            db.collection("users").document(user.getUid()).set(userInfo);
+
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()) {
-
                                                 finish();
                                                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                                             } else {
@@ -203,14 +202,60 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         return(password.equals(confirmPassword) &&
                 password.matches("(.*)[0-9](.*)") &&
                 password.matches("(.*)[A-Z](.*)") &&
-                password.length() < 7);
+                password.length() > 7);
+    }
+
+    //Check database to see if username is available
+    private void signUp() {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+        String username = editTextUsername.getText().toString().trim();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        if(TextUtils.isEmpty(email)) {
+            //email is empty
+            Toast.makeText(this, "Please enter an email", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(TextUtils.isEmpty(password)) {
+            //password is empty
+            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(TextUtils.isEmpty(confirmPassword)) {
+            //confirm password is empty
+            Toast.makeText(this, "Please confirm your password", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(!checkPasswordStrength()) {
+            Toast.makeText(this, "Passwords do not match, or is not strong enough", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Check if username is available, then call registerUser() if it is
+        db.collection("users").whereEqualTo("username", username).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            //Username is available
+                            if(task.getResult().isEmpty()) {
+                                //Register user
+                                registerUser();
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Username is not available", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(SignUpActivity.this, "Something went wrong, try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.buttonRegister:
-                registerUser();
+                signUp();
                 break;
 
             case R.id.textViewSignIn:
