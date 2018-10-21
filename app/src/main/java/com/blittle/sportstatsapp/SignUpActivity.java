@@ -132,10 +132,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                                     .setDisplayName(editTextUsername.getText().toString().trim())
                                     .build();
 
+                            String username = editTextUsername.getText().toString().trim();
+                            String username_insensitive = username.toLowerCase().replaceAll("\\s","");
                             //Input userInfo into Cloud Firestore database
                             Map<String, Object> userInfo = new HashMap<>();
                             userInfo.put("email", user.getEmail());
-                            userInfo.put("username", editTextUsername.getText().toString().trim());
+                            userInfo.put("username", username);
+                            userInfo.put("username_insensitive", username_insensitive);
+
                             db.collection("users").document(user.getUid()).set(userInfo);
 
                             user.updateProfile(profileUpdates)
@@ -231,8 +235,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
+        //Make username all lowercase and remove white space, this will have it's own field in the database named "username_insensitive"
+        String username_insensitive = username.toLowerCase().replaceAll("\\s","");
+
         //Check if username is available, then call registerUser() if it is
-        db.collection("users").whereEqualTo("username", username).get()
+        db.collection("users").whereEqualTo("username_insensitive", username_insensitive).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
