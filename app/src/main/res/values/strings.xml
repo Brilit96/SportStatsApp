@@ -11,4 +11,6 @@
     <string name="logout">Log Out</string>
     <string name="emailVerified">Email Status: Verified</string>
     <string name="emailNotVerified">Email Status: Not Verified\n(Resend Email Verification)</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
