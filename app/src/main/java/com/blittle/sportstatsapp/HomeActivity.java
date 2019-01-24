@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,6 +33,19 @@ public class HomeActivity extends AppCompatActivity {
         //Set Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Retrieve Summoner Info
+        RiotApiController apiController = new RiotApiController();
+        try {
+            String summonerID = apiController.getSummonerID("Liddle");
+            String accountID = apiController.getAccountID("Liddle");
+            Log.d("JSON OBJECT: ", summonerID);
+            Log.d("JSON OBJECT: ", accountID);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
