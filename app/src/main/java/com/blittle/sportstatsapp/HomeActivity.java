@@ -8,10 +8,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private Button buttonSearchSummoner;
+    private EditText editTextSearchSummoner;
 
     FirebaseAuth firebaseAuth;
     @Override
@@ -30,22 +36,14 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         }
 
+        buttonSearchSummoner = findViewById(R.id.buttonSearchSummoner);
+        editTextSearchSummoner = findViewById(R.id.editTextSearchSummoner);
+
+        buttonSearchSummoner.setOnClickListener(this);
+
         //Set Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //Retrieve Summoner Info
-        RiotApiController apiController = new RiotApiController();
-        try {
-            String summonerID = apiController.getSummonerID("Liddle");
-            String accountID = apiController.getAccountID("Liddle");
-            Log.d("JSON OBJECT: ", summonerID);
-            Log.d("JSON OBJECT: ", accountID);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     @Override
@@ -69,6 +67,30 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view == buttonSearchSummoner) {
+            String sum = editTextSearchSummoner.getText().toString().trim();
+            searchSummoner(sum);
+        }
+    }
+
+    //Search summoner by name
+    private void searchSummoner(String summoner) {
+        //Retrieve Summoner Info
+        RiotApiController apiController = new RiotApiController();
+        try {
+            String summonerID = apiController.getSummonerID(summoner);
+            String accountID = apiController.getAccountID(summoner);
+            String match = apiController.getMatchLists(accountID);
+            Log.d("JSON: ", summonerID);
+            Log.d("JSON: ", accountID);
+            Log.d("JSON: ", match);
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 }

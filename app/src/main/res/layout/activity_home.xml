@@ -10,4 +10,30 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.10">
+
+        <EditText
+            android:id="@+id/editTextSearchSummoner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".70"
+            android:hint="@string/enterSummoner"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/buttonSearchSummoner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30"
+            android:text="@string/search" />
+    </LinearLayout>
+
+
+
 </android.support.constraint.ConstraintLayout>

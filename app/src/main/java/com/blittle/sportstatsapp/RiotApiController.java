@@ -4,9 +4,9 @@ import android.util.Log;
 import org.json.JSONObject;
 
 
-public class RiotApiController {
+class RiotApiController {
     //Gets the Summoner ID
-    public String getSummonerID(String summonerName) throws Exception{
+    String getSummonerID(String summonerName) throws Exception{
         String url = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName;
         String json = new RiotApi().execute(url).get();
         Log.d("JSON OBJECT: ", json);
@@ -17,12 +17,11 @@ public class RiotApiController {
 
         //Convert json string to JSONObject, then return the summoner ID;
         JSONObject jObj = new JSONObject(json);
-        String summonerID = jObj.getString("id");
-        return summonerID;
+        return jObj.getString("id");
     }
 
     //Gets the Account ID
-    public String getAccountID(String summonerName) throws Exception {
+    String getAccountID(String summonerName) throws Exception {
         String url = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName;
         String json = new RiotApi().execute(url).get();
 
@@ -33,7 +32,19 @@ public class RiotApiController {
 
         //Convert json string to JSONObject, then return the summoner ID;
         JSONObject jObj = new JSONObject(json);
-        String accountID = jObj.getString("accountId");
-        return accountID;
+        return jObj.getString("accountId");
+    }
+
+    String getMatchLists(String accountID) throws Exception {
+        String url = "https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/" + accountID;
+        String json = new RiotApi().execute(url).get();
+
+        //No data was pulled from the API
+        if(json == null) {
+            return null;
+        }
+
+        JSONObject jObj = new JSONObject(json);
+        return jObj.getJSONArray("matches").getJSONObject(0).getString("gameId");
     }
 }

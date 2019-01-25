@@ -3,6 +3,8 @@
     <string name="enterEmail">Email</string>
     <string name="enterPassword">Password</string>
     <string name="enterUsername">Desired Username</string>
+    <string name="enterSummoner">Summoner Name</string>
+    <string name="search">Search</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="register">Register</string>
     <string name="alreadyRegistered">Already Registered? Sign in here</string>
